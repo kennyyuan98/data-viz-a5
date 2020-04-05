@@ -24,6 +24,19 @@ p {
 	font-family: serif;
 	margin: 25px 0;
 }
+.svg-tooltip {;
+    background: rgba(69,77,93,.9);
+    border-radius: .1rem;
+    color: #fff;
+    display: block;
+    max-width: 320px;
+    padding: .2rem .4rem;
+    position: absolute;
+    text-overflow: ellipsis;
+    white-space: pre;
+    z-index: 300;
+    visibility: hidden;
+  }
 
 .viz {
 	margin: 25px 0;
