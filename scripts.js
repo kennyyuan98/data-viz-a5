@@ -4,12 +4,88 @@ $(document).ready(function() {
 	d3.csv("https://gist.githubusercontent.com/kennyyuan98/6256ac48a40147748d78cd544b63942d/raw/21922ad6877a68a2eee9a382986508f6eb92f302/accidentdata-time.csv", function(data) {
 		createMonthlyViz(data);
 	});
+
+	d3.csv("https://raw.githubusercontent.com/kennyyuan98/data-viz-a5/master/pre_processing_scripts/the_real_true_final_version.csv", function(data) {
+		let counts = {};
+		for (let datum of data) {
+			let age = String(datum["age"]);
+			let gender = datum["gender"];
+			// let severity = datum["severity"];
+
+			if (age !== "" && ageGroups.includes(age) && gender !== "") {
+				if (!(age in counts)) {
+					counts[age] = {};
+				}
+				if (!(gender in counts[age])) {
+					counts[age][gender] = 0;
+				}
+				if ((gender === "Male" || gender === "Female")) {
+					counts[age][gender]++;
+				}
+			}
+		}
+		let reformattedData = [];
+		for (let age in counts) {
+			for (let gender in counts[age]) {
+				reformattedData.push([age, gender, counts[age][gender]]);
+			}
+		}
+		createDemographicsViz(reformattedData);
+	});
 });
+
+const ageGroups = ["under 10", "10", "20", "30", "40", "50", "60", "70", "80", "90"];
 
 /* 
 * Logic for creating the chart showing number of cases per month over the years (A4). 
 * Note: All logic should be self-contained and shouldn't affect any data / DOM elements besides itself.
 */
+function createDemographicsViz(data) {
+	const width = $(".content").width();
+	const height = 400;
+	const padding = 25;
+
+	//Create SVG element
+    var svg = d3.select("#demographics")
+        .append("svg")
+        .attr("width", width)
+        .attr("height", height);
+
+    let x = d3.scaleBand()
+    	.domain(ageGroups)
+    	.range([padding*2, width-padding])
+    	.padding(0.1);
+
+	let x_axis = d3.axisTop()
+	    .scale(x);
+
+    svg.append("g")
+        .attr("transform", "translate(0, "+(padding)+")")
+        .call(x_axis);
+
+    let y = d3.scaleBand()
+    	.domain(["Male", "Female"])
+    	.range([height-padding, padding]);
+
+	let y_axis = d3.axisLeft()
+        .scale(y);	
+
+    svg.append("g")
+       .attr("transform", "translate("+padding*2+", 0)")
+       .call(y_axis);
+
+	svg.append("g").selectAll("circle")
+	    .data(data)
+	    .enter()
+	    .append("circle")
+        	.attr("r", d=>d[2]/7)
+        	.style("opacity", 0.5)
+        	.attr("fill", "steelblue")
+        	.attr("cx", d=>x(d[0])+x.bandwidth()/2)
+        	.attr("cy", d=>y(d[1])+y.bandwidth()/2);
+}
+
+
 function createMonthlyViz(data) {
 	const rawData = data;
 	const width = $(".content").width() - 100; // scales width based on the .content's width

@@ -39,7 +39,7 @@ p {
   }
 
 .viz {
-	margin: 25px 0;
+	margin: 50px 0;
 }
 
 .viz * {
@@ -50,6 +50,12 @@ p {
 div.content {
 	width: 1000px;
 	margin: 0 auto;
+}
+
+section.heading {
+	background: #444;
+	color: white;
+	text-align: center;
 }
 
 /* Intro section */
