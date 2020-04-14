@@ -1,30 +1,6 @@
 /* Global styles */
 
-* {
-}
-
-html, body {
-	margin: 0;
-}
-
-section {
-	width: 100%;
-	box-sizing: border-box;
-	padding: 75px 50px;
-}
-
-h1, h2, h3, h4, h5, h6 {
-	font-family: sans-serif;
-	margin: 25px 0;
-}
-
-p {
-	font-size: 18px;
-	line-height: 36px;
-	font-family: serif;
-	margin: 25px 0;
-}
-.svg-tooltip {;
+.svg-tooltip {
     background: rgba(69,77,93,.9);
     border-radius: .1rem;
     color: #fff;
@@ -36,38 +12,28 @@ p {
     white-space: pre;
     z-index: 300;
     visibility: hidden;
-  }
+}
 
-.viz {
+.media {
 	margin: 50px 0;
+	font-size: 14px;
 }
 
-.viz * {
-	font-size: 12px;
-	font-family: sans-serif;
+.container {
+	padding-top: 100px;
+	padding-bottom: 100px;
 }
 
-div.content {
-	width: 1000px;
-	margin: 0 auto;
-}
-
-section.heading {
+.heading {
+	text-align: center;
 	background: #444;
 	color: white;
-	text-align: center;
 }
 
 /* Intro section */
 
-section#intro {
+#intro {
 	height: 100vh;
-    display: flex;
-    align-items: top;
-    background-image: url('https://www.triodos-im.com/binaries/content/gallery/tim/shared/hero-images/sri/case-study-jr-central.jpg/case-study-jr-central.jpg');
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
 }
 
 /* Styles for the accidents per month visualization */
@@ -86,7 +52,6 @@ section#intro {
 #accidents-per-month .legend p#blue-line-desc {
 	margin: 0 0 25px 0;
 	color: steelblue;
-	line-height: 18px;
 }
 
 #accidents-per-month .legend button {

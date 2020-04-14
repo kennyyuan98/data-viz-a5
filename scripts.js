@@ -36,12 +36,13 @@ $(document).ready(function() {
 
 const ageGroups = ["under 10", "10", "20", "30", "40", "50", "60", "70", "80", "90"];
 
+
 /* 
 * Logic for creating the chart showing number of cases per month over the years (A4). 
 * Note: All logic should be self-contained and shouldn't affect any data / DOM elements besides itself.
 */
 function createDemographicsViz(data) {
-	const width = $(".content").width();
+	const width = $(".container").width();
 	const height = 400;
 	const padding = 25;
 
@@ -88,7 +89,7 @@ function createDemographicsViz(data) {
 
 function createMonthlyViz(data) {
 	const rawData = data;
-	const width = $(".content").width() - 100; // scales width based on the .content's width
+	const width = $(".container").width() - 100; // scales width based on the .content's width
 	const height = 700;
 	const xOffset = 50;
 	const fontSize = "12px";

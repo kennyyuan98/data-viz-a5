@@ -1,37 +1,78 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<!-- Meta data -->
 	<title>Injuries on Japan's Railway System</title>
+
+	<!-- Stylesheets -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+	<link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
 	<link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 <body>
+
+	<!-- Intro section -->
 	<section id="intro">
-		<div class="content">
+		<div class="container">
 			<h1>Injuries on Japan's Railway System</h1>
 			<p>hi ima train</p>
 		</div>
 	</section>
-	<section>
-		<div class="content">
-			<h2>Accidents Over Time</h2>
-			<p>Now let's see how the accidents are distributed over the months of the year. In the following visualization, you can select a subset of the years to display, which will move the blue line that shows average number of accidents per month.</p>
-			<div id="accidents-per-month" class="viz"></div>
-			<p>As you can see, it's gone down over the years.</p>
+
+	<!-- Geo data section -->
+	<section class="heading">
+		<div class="container">
+			<h2>Geography</h2>
 		</div>
 	</section>
+	<section>
+		<div class="container">
+			<p>wherefore</p>
+		</div>
+	</section>
+
+	<!-- Demographic data section -->
 	<section class="heading">
-		<div class="content">
+		<div class="container">
 			<h2>Demographics</h2>
 		</div>
 	</section>
 	<section>
-		<div class="content">
+		<div class="container">
 			<p>hb the ppl tho</p>
-			<div id="demographics" class="viz"></div>
+			<div id="demographics" class="media"></div>
 		</div>
 	</section>
 
+	<!-- Time data section -->
+	<section class="heading">
+		<div class="container">
+			<h2>Time</h2>
+		</div>
+	</section>
+	<section>
+		<div class="container">
+			<p>Now let's see how the accidents are distributed over the months of the year. In the following visualization, you can select a subset of the years to display, which will move the blue line that shows average number of accidents per month.</p>
+			<div id="accidents-per-month" class="media"></div>
+			<p>As you can see, it's gone down over the years.</p>
+		</div>
+	</section>
+
+	<!-- Conclusions section -->
+	<section class="heading">
+		<div class="container">
+			<h2>Conclusions</h2>
+		</div>
+	</section>
+	<section>
+		<div class="container">
+			<p>dab</p>
+		</div>
+	</section>
+
+	<!-- Script files -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.0/js/bootstrap.bundle.min.js"></script>
 	<script src="https://d3js.org/d3.v4.min.js"></script>
 	<script src="https://d3js.org/d3-array.v2.min.js"></script>
 	<script src="scripts.js"></script>
