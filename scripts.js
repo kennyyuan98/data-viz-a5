@@ -25,7 +25,7 @@ function createDemographicsViz(originalData) {
 	let data = filterDemographicDataBySeverity(originalData, severityTypes);
 
 	const width = $(".container").width();
-	const height = 600;
+	const height = 500;
 	const padding = 25;
 	const fontSize = "14px";
 	const maxCount = Math.max(d3.max(data["Male"].map(d=>d[1])), d3.max(data["Female"].map(d=>d[1])));
@@ -60,6 +60,16 @@ function createDemographicsViz(originalData) {
        .attr("transform", "translate("+padding*2+", 0)")
         .style("font", fontSize + " sans-serif")
        .call(y_axis);
+
+	svg.append("g")
+  		.attr("class","grid")
+  		.attr("transform","translate("+padding*2+", 0)")
+  		.style("stroke-dasharray",("3,3"))
+  		.call(d3.axisLeft(y)
+	    	.ticks(10)
+            .tickSize(-width)
+            .tickFormat("")
+		);
 
 	updateDemographicsViz(data, svg, x, y, height, padding, true);
 
