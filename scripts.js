@@ -6,45 +6,29 @@ $(document).ready(function() {
 	});
 
 	d3.csv("https://raw.githubusercontent.com/kennyyuan98/data-viz-a5/master/pre_processing_scripts/the_real_true_final_version.csv", function(data) {
-		let counts = {};
-		for (let datum of data) {
-			let age = String(datum["age"]);
-			let gender = datum["gender"];
-			// let severity = datum["severity"];
+		createDemographicsViz(data);
 
-			if (age !== "" && ageGroups.includes(age) && gender !== "") {
-				if (!(age in counts)) {
-					counts[age] = {};
-				}
-				if (!(gender in counts[age])) {
-					counts[age][gender] = 0;
-				}
-				if ((gender === "Male" || gender === "Female")) {
-					counts[age][gender]++;
-				}
-			}
-		}
-		let reformattedData = [];
-		for (let age in counts) {
-			for (let gender in counts[age]) {
-				reformattedData.push([age, gender, counts[age][gender]]);
-			}
-		}
-		createDemographicsViz(reformattedData);
+		// $("#severity").click(function(){
+		// 	createDemographicsVizWithSeverityFilter(data, ["Fatal"]);
+		// });
 	});
 });
 
 const ageGroups = ["under 10", "10", "20", "30", "40", "50", "60", "70", "80", "90"];
-
+const severityTypes = ["Fatal", "Minor Injury", "No Injury", "Severe Injury"];
 
 /* 
 * Logic for creating the chart showing number of cases per month over the years (A4). 
 * Note: All logic should be self-contained and shouldn't affect any data / DOM elements besides itself.
 */
-function createDemographicsViz(data) {
+function createDemographicsViz(originalData) {
+	let data = filterDemographicDataBySeverity(originalData, severityTypes);
+
 	const width = $(".container").width();
-	const height = 400;
+	const height = 600;
 	const padding = 25;
+	const fontSize = "14px";
+	const maxCount = Math.max(d3.max(data["Male"].map(d=>d[1])), d3.max(data["Female"].map(d=>d[1])));
 
 	//Create SVG element
     var svg = d3.select("#demographics")
@@ -57,15 +41,16 @@ function createDemographicsViz(data) {
     	.range([padding*2, width-padding])
     	.padding(0.1);
 
-	let x_axis = d3.axisTop()
+	let x_axis = d3.axisBottom()
 	    .scale(x);
 
     svg.append("g")
-        .attr("transform", "translate(0, "+(padding)+")")
+        .attr("transform", "translate(0, "+(height-padding)+")")
+        .style("font", fontSize + " sans-serif")
         .call(x_axis);
 
-    let y = d3.scaleBand()
-    	.domain(["Male", "Female"])
+    let y = d3.scaleLinear()
+    	.domain([0, maxCount]).nice()
     	.range([height-padding, padding]);
 
 	let y_axis = d3.axisLeft()
@@ -73,17 +58,93 @@ function createDemographicsViz(data) {
 
     svg.append("g")
        .attr("transform", "translate("+padding*2+", 0)")
+        .style("font", fontSize + " sans-serif")
        .call(y_axis);
 
-	svg.append("g").selectAll("circle")
-	    .data(data)
-	    .enter()
-	    .append("circle")
-        	.attr("r", d=>d[2]/7)
-        	.style("opacity", 0.5)
-        	.attr("fill", "steelblue")
-        	.attr("cx", d=>x(d[0])+x.bandwidth()/2)
-        	.attr("cy", d=>y(d[1])+y.bandwidth()/2);
+	updateDemographicsViz(data, svg, x, y, height, padding, true);
+
+	$(".severity").click(function() {
+		let severityFilters = [];
+		let numChecked = 0;
+		$(".severity").each(function(i, e) {
+			if (e.checked) {
+				severityFilters.push(e.value);
+				numChecked++;
+			}
+		});
+
+		if (numChecked === 0) {
+			$(this).prop("checked", true);
+			alert("No data to display!");
+		}
+		else {
+			let newData = filterDemographicDataBySeverity(originalData, severityFilters);
+			updateDemographicsViz(newData, svg, x, y, height, padding, false);
+		}
+	})
+}
+
+function updateDemographicsViz(data, svg, x, y, height, padding, isFirstUpdate) {
+
+	let female = svg.selectAll("rect.female").data(data["Female"]);
+	let male = svg.selectAll("rect.male").data(data["Male"]);
+
+	if (isFirstUpdate) {
+		female = female.enter().append("rect");
+		male = male.enter().append("rect");
+	} else {
+		female = female.enter().append("rect")
+	    	.merge(female).transition().duration(1000);
+		male = male.enter().append("rect")
+	    	.merge(male).transition().duration(1000);
+	}
+
+    female
+    	.attr("class", "female")
+    	.attr("x", d=>x(d[0]))
+		.attr("y", d=>y(d[1]))
+		.attr("width", (d) => x.bandwidth()/2)
+		.attr("height", (d) =>(height-padding-y(d[1])))
+		.style("cursor", "pointer")
+		.style("fill", "#d65454");
+
+	male
+    	.attr("class", "male")
+    	.attr("x", d=>x(d[0])+x.bandwidth()/2)
+		.attr("y", d=>y(d[1]))
+		.attr("width", (d) => x.bandwidth()/2)
+		.attr("height", (d) =>(height-padding-y(d[1])))
+		.style("cursor", "pointer")
+		.style("fill", "steelblue");
+}
+
+
+function filterDemographicDataBySeverity(data, severityFilters) {
+	let counts = {};
+	for (let datum of data) {
+		let age = String(datum["age"]);
+		let gender = datum["gender"];
+		let severity = datum["severity_of_injury"]; // "", "Fatal", "Minor Injury", "No Injury", "Severe Injury"
+
+		if (age !== "" && ageGroups.includes(age) && (gender === "Male" || gender === "Female") && severityFilters.includes(severity)) {
+			if (!(gender in counts)) {
+				counts[gender] = {};
+			}
+			if (!(age in counts[gender])) {
+				counts[gender][age] = 0;
+			}
+			counts[gender][age]++;
+		}
+	}
+	let reformattedData = {"Male": [], "Female": []};
+	for (let age in counts["Male"]) {
+		reformattedData["Male"].push([age, counts["Male"][age]]);
+	}
+	for (let age in counts["Female"]) {
+		reformattedData["Female"].push([age, counts["Female"][age]]);
+	}
+	// console.log(reformattedData);
+	return reformattedData;
 }
 
 
@@ -92,7 +153,7 @@ function createMonthlyViz(data) {
 	const width = $(".container").width() - 100; // scales width based on the .content's width
 	const height = 700;
 	const xOffset = 50;
-	const fontSize = "12px";
+	const fontSize = "14px";
 	const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 	const colorPalette = d3.interpolateHcl("#f4e153", "#362142");
 	const t = d3.transition()
