@@ -7,6 +7,8 @@ $(document).ready(function() {
 
 	d3.csv("https://raw.githubusercontent.com/kennyyuan98/data-viz-a5/master/pre_processing_scripts/the_real_true_final_version.csv", function(data) {
 		createDemographicsViz(data);
+		createYearlyViz(data);
+		createHourlyViz(data);
 
 		// $("#severity").click(function(){
 		// 	createDemographicsVizWithSeverityFilter(data, ["Fatal"]);
@@ -21,11 +23,223 @@ const severityTypes = ["Fatal", "Minor Injury", "No Injury", "Severe Injury"];
 * Logic for creating the chart showing number of cases per month over the years (A4). 
 * Note: All logic should be self-contained and shouldn't affect any data / DOM elements besides itself.
 */
+function createHourlyViz(data) {
+	let hourCount = new Map();
+	for (let datum of data) {
+		let gender = datum["gender"];
+		if (gender === "Male" || gender === "Female") {
+			let hour = datum["Date"].split(" ")[1].split(":")[0];
+			let key = hour + " " + gender;
+			if (!hourCount.has(key)) {
+				hourCount.set(key, 0);
+			}
+			hourCount.set(key, hourCount.get(key)+1);
+		}
+	}
+	let femaleData = [];
+	let maleData = [];
+	for (let entry of hourCount) {
+		let hour = entry[0].split(" ")[0];
+		let gender = entry[0].split(" ")[1];
+		if (gender === "Male") {
+			maleData.push([hour, entry[1]]);
+		} else {
+			femaleData.push([hour, entry[1]]);
+		}
+	}
+
+	const width = $(".container").width();
+	const height = 600;
+	const padding = 25;
+	const fontSize = "14px";
+	const maxCount = Math.max(d3.max(maleData.map(e=>e[1])), d3.max(femaleData.map(e=>e[1])));
+	const minCount = Math.max(d3.min(maleData.map(e=>e[1])), d3.min(femaleData.map(e=>e[1])));
+
+	//Create SVG element
+    var svg = d3.select("#accidents-per-hour")
+        .append("svg")
+        .attr("width", width)
+        .attr("height", height);
+
+    let x = d3.scaleBand()
+    	.domain(maleData.map(e=>parseInt(e[0])).sort((a,b)=>a-b))
+    	.range([padding*2, width-padding]);
+
+    let x_axis = d3.axisBottom()
+	    .scale(x);
+
+    svg.append("g")
+        .attr("transform", "translate(0, "+(height-padding)+")")
+        .style("font", fontSize + " sans-serif")
+        .call(x_axis);
+
+    let y = d3.scaleLinear()
+    	.domain([minCount, maxCount]).nice()
+    	.range([height-padding, padding]);
+
+	let y_axis = d3.axisLeft()
+		.ticks(6)
+        .scale(y);	
+
+    svg.append("g")
+       .attr("transform", "translate("+padding*2+", 0)")
+        .style("font", fontSize + " sans-serif")
+       .call(y_axis);
+
+	svg.append("rect")
+		.attr("x", x("0")+x.bandwidth()/2)
+		.attr("y", padding)
+		.attr("width", x.bandwidth()*5)
+		.attr("height", height-padding*2)
+		.attr("fill", "#ddd");
+
+	svg.append("g")
+  		.attr("class","grid")
+  		.attr("transform","translate("+padding*2+", 0)")
+  		.style("stroke-dasharray",("3,3"))
+  		.call(d3.axisLeft(y)
+	    	.ticks(6)
+            .tickSize(-width)
+            .tickFormat("")
+            .tickSizeOuter(0)	
+		);
+
+    svg.append("path")
+		.datum(maleData.sort((a,b)=>parseInt(a[0])-parseInt(b[0])))
+			.attr("fill", "none")
+			.attr("stroke", "steelblue")
+			.attr("stroke-width", 2)
+			.attr("d", d3.line()
+				.x(function(d) { return (x(d[0])) })
+				.y(function(d) { return y(d[1]) })
+			)
+	  		.attr("transform","translate("+x.bandwidth()/2+", 0)");
+
+    svg.append("path")
+		.datum(femaleData.sort((a,b)=>parseInt(a[0])-parseInt(b[0])))
+			.attr("fill", "none")
+			.attr("stroke", "#d65454")
+			.attr("stroke-width", 2)
+			.attr("d", d3.line()
+				.x(function(d) { return (x(d[0])) })
+				.y(function(d) { return y(d[1]) })
+			)
+	  		.attr("transform","translate("+x.bandwidth()/2+", 0)");
+
+	svg.append("g").selectAll("circle")
+		.data(maleData)
+		.enter()
+		.append("circle")
+        	.attr("r", 4)
+        	.attr("fill", "steelblue")
+        	.attr("cx", d=>Math.round(x(d[0])))
+        	.attr("cy", d=>Math.round(y(d[1])))
+	  		.attr("transform","translate("+x.bandwidth()/2+", 0)");
+
+	svg.append("g").selectAll("circle")
+		.data(femaleData)
+		.enter()
+		.append("circle")
+        	.attr("r", 4)
+        	.attr("fill", "#d65454")
+        	.attr("cx", d=>Math.round(x(d[0])))
+        	.attr("cy", d=>Math.round(y(d[1])))
+	  		.attr("transform","translate("+x.bandwidth()/2+", 0)");
+}
+
+function createYearlyViz(data) {
+	let yearCount = new Map();
+	for (let datum of data) {
+		let year = "20" + datum["Date"].split(" ")[0].split("/")[2];
+		if (year !== "2020") {
+			if (!yearCount.has(year)) {
+				yearCount.set(year, 0);
+			}
+			yearCount.set(year, yearCount.get(year)+1);
+		}
+	}
+	let yearData = [];
+	for (let entry of yearCount) {
+		yearData.push(entry);
+	}
+
+	const width = $(".container").width();
+	const height = 500;
+	const padding = 25;
+	const fontSize = "14px";
+	const maxCount = d3.max(yearData.map(e=>e[1]));
+	const minCount = d3.min(yearData.map(e=>e[1]));
+
+	//Create SVG element
+    var svg = d3.select("#accidents-per-year")
+        .append("svg")
+        .attr("width", width)
+        .attr("height", height);
+
+    let x = d3.scaleBand()
+    	.domain(yearData.map(e=>e[0]).sort())
+    	.range([padding*2, width-padding])
+    	.padding(0.1);
+
+	let x_axis = d3.axisBottom()
+	    .scale(x);
+
+    svg.append("g")
+        .attr("transform", "translate(0, "+(height-padding)+")")
+        .style("font", fontSize + " sans-serif")
+        .call(x_axis);
+
+    let y = d3.scaleLinear()
+    	.domain([minCount, maxCount]).nice()
+    	.range([height-padding, padding]);
+
+	let y_axis = d3.axisLeft()
+        .scale(y);	
+
+    svg.append("g")
+       .attr("transform", "translate("+padding*2+", 0)")
+        .style("font", fontSize + " sans-serif")
+       .call(y_axis);
+
+	svg.append("g")
+  		.attr("class","grid")
+  		.attr("transform","translate("+padding*2+", 0)")
+  		.style("stroke-dasharray",("3,3"))
+  		.call(d3.axisLeft(y)
+	    	.ticks(10)
+            .tickSize(-width)
+            .tickFormat("")
+            .tickSizeOuter(0)	
+		);
+
+	svg.append("path")
+		.datum(yearData)
+			.attr("fill", "none")
+			.attr("stroke", "steelblue")
+			.attr("stroke-width", 2)
+			.attr("d", d3.line()
+				.x(function(d) { return (x(d[0])) })
+				.y(function(d) { return y(d[1]) })
+			)
+	  		.attr("transform","translate("+x.bandwidth()/2+", 0)");
+
+	svg.append("g").selectAll("circle")
+		.data(yearData)
+		.enter()
+		.append("circle")
+        	.attr("r", 4)
+        	.attr("fill", "steelblue")
+        	.attr("cx", d=>Math.round(x(d[0])))
+        	.attr("cy", d=>Math.round(y(d[1])))
+	  		.attr("transform","translate("+x.bandwidth()/2+", 0)");
+}
+
+
 function createDemographicsViz(originalData) {
 	let data = filterDemographicDataBySeverity(originalData, severityTypes);
 
 	const width = $(".container").width();
-	const height = 500;
+	const height = 600;
 	const padding = 25;
 	const fontSize = "14px";
 	const maxCount = Math.max(d3.max(data["Male"].map(d=>d[1])), d3.max(data["Female"].map(d=>d[1])));
@@ -69,6 +283,7 @@ function createDemographicsViz(originalData) {
 	    	.ticks(10)
             .tickSize(-width)
             .tickFormat("")
+            .tickSizeOuter(0)	
 		);
 
 	updateDemographicsViz(data, svg, x, y, height, padding, true);
@@ -382,4 +597,13 @@ function createMonthlyViz(data) {
 	let selectButton = $("<button>Select All</button>");
 	$("div#accidents-per-month div.legend").append(selectButton);
 	selectButton.click(function() {showAll()});
+
+	toggle("2018");
+	toggle("2017");
+	toggle("2016");
+	toggle("2015");
+	toggle("2014");
+	toggle("2013");
+	toggle("2012");
+	toggle("2011");
 }
