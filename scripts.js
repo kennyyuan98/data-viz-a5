@@ -87,9 +87,16 @@ function createHourlyViz(data) {
        .call(y_axis);
 
 	svg.append("rect")
-		.attr("x", x("0")+x.bandwidth()/2)
+		.attr("x", x("19")+x.bandwidth()/2)
 		.attr("y", padding)
-		.attr("width", x.bandwidth()*5)
+		.attr("width", x.bandwidth()*4)
+		.attr("height", height-padding*2)
+		.attr("fill", "#ddd");
+
+	svg.append("rect")
+		.attr("x", x("6")+x.bandwidth()/2)
+		.attr("y", padding)
+		.attr("width", x.bandwidth()*4)
 		.attr("height", height-padding*2)
 		.attr("fill", "#ddd");
 
