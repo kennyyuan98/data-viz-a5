@@ -1,8 +1,8 @@
 $(document).ready(function() {
 	// This is the top-level function, it should call the functions to create each viz.
 	// MAKE SURE that in your viz-creating function, your select() functions use specific-enough selectors so you don't modify the wrong viz!
-	d3.csv("https://gist.githubusercontent.com/kennyyuan98/6256ac48a40147748d78cd544b63942d/raw/21922ad6877a68a2eee9a382986508f6eb92f302/accidentdata-time.csv", function(data) {
-		createMonthlyViz(data);
+    d3.csv("https://gist.githubusercontent.com/jxcheng/b89403eef4363348da7ced56220adc45/raw/ac7178c141bf8511a5814b84659cc5b3c86db16a/japanese_subway_accident_data.csv", function(data) {
+        createMonthlyViz(data);
 	});
 
 	d3.csv("https://raw.githubusercontent.com/kennyyuan98/data-viz-a5/master/pre_processing_scripts/the_real_true_final_version.csv", function(data) {
@@ -18,6 +18,7 @@ $(document).ready(function() {
 
 const ageGroups = ["under 10", "10", "20", "30", "40", "50", "60", "70", "80", "90"];
 const severityTypes = ["Fatal", "Minor Injury", "No Injury", "Severe Injury"];
+const genders = ["Male", "Female"];
 
 /* 
 * Logic for creating the chart showing number of cases per month over the years (A4). 
@@ -380,6 +381,7 @@ function filterDemographicDataBySeverity(data, severityFilters) {
 }
 
 
+//function createMonthlyViz(data, data2) {
 function createMonthlyViz(data) {
 	const rawData = data;
 	const width = $(".container").width() - 100; // scales width based on the .content's width
@@ -396,7 +398,7 @@ function createMonthlyViz(data) {
 	function getYear(dateTime) {
 		// there's a few cases where there's a comma after the year, as in "2018,"
 		dateTime = dateTime.replace(",", "")
-		let year = parseInt(dateTime.split(" ")[0].split("/")[2])
+		let year = parseInt("20"+dateTime.split(" ")[0].split("/")[2])
 		return year
 	}
 
@@ -416,6 +418,32 @@ function createMonthlyViz(data) {
 
 	let max = Math.max.apply(Math, dataByYear.map(x => x[1].flat().filter((a,i)=>i%2==1)).flat());
 	let min = Math.min.apply(Math, dataByYear.map(x => x[1].flat().filter((a,i)=>i%2==1)).flat());
+    
+    let specifics = {2020: {}, 2019: {}, 2018: {}, 2017: {}, 2016: {}, 2015: {},
+                     2014: {}, 2013: {}, 2012: {}, 2011: {}, 2010: {}};
+
+    for (let i = 0; i < rawData.length; ++i) {
+        // date stuff
+        let currD = rawData[i].Date;
+        let currM = getMonth(currD);
+        let currY = getYear(currD);
+        // additional info that we want
+        let sev = severityTypes.includes(rawData[i].Severity) ? rawData[i].Severity : "Not Available";
+        let sex = genders.includes(rawData[i].Sex) ? rawData[i].Sex : "Not Available";
+        
+        if (currM in specifics[currY]) {
+            specifics[currY][currM].sev[sev] += 1;
+            specifics[currY][currM].sex[sex] += 1;
+        } else {
+            specifics[currY][currM] = {sev: {"Fatal": 0, "Minor Injury": 0,
+                                             "No Injury": 0, "Severe Injury": 0,
+                                             "Not Available": 0},
+                                       sex: {"Male": 0, "Female": 0, "Not Available": 0}};
+            specifics[currY][currM].sev[sev] += 1;
+            specifics[currY][currM].sex[sex] += 1;
+        } // end if-else
+    } // end for loop
+
 
     //Create SVG element
     var svg = d3.select("#accidents-per-month")
@@ -494,6 +522,8 @@ function createMonthlyViz(data) {
         .attr("transform", "translate(" + (x.bandwidth()/2 + xOffset) + ")");
 
     // Render tooltips
+    let ttToggle = false;
+    
     const tooltip = d3.select("#accidents-per-month").append("div")
 		.attr("class", "svg-tooltip")
 		.style("position", "absolute")
@@ -501,6 +531,7 @@ function createMonthlyViz(data) {
 
 	svg.selectAll("rect.bar")
 		.on("mouseover", function(){
+            d3.select(this).style("cursor", "pointer");
 			let year = d3.select(this)
 				.attr("data-year");
 			let month = months[d3.select(this).data()[0][0]-1];
@@ -512,15 +543,46 @@ function createMonthlyViz(data) {
 		})
 		.on("mousemove", function(){
 			return tooltip
-				.style("top", (d3.event.pageY-10)+"px")
-				.style("left", (d3.event.pageX-tooltip.style("width").replace("px","")-20)+"px");
+                .style("top", (d3.event.pageY-10)+"px")
+                .style("left", (d3.event.pageX-tooltip.style("width").replace("px","")-20)+"px");
 		})
 		.on("mouseout", function(){
+            ttToggle = false;
 			let year = d3.select(this)
 				.attr("data-year");
 			return tooltip
 				.style("visibility", "hidden");
-		});
+		})
+        .on("click", function(){
+            ttToggle = !ttToggle;
+            console.log(ttToggle);
+            let year = d3.select(this).attr("data-year");
+            let yearInt = parseInt(year);
+            let monthInt = d3.select(this).data()[0][0];
+            let month = months[monthInt-1];
+            let count = d3.select(this).data()[0][1];
+            if (ttToggle) {
+                tooltip.text(month + " " + year + ": " + count + " injuries\n\n"
+                     + "INJURIES BY GENDER:\n"
+                     + "  " + specifics[yearInt][monthInt].sex.Male + " males\n"
+                     + "  " + specifics[yearInt][monthInt].sex.Female + " females\n"
+                     + "  " + specifics[yearInt][monthInt].sex["Not Available"] + " not available\n\n"
+                     + "INJURIES BY SEVERITY:\n"
+                     + "  " + specifics[yearInt][monthInt].sev["No Injury"] + " no injury\n"
+                     + "  " + specifics[yearInt][monthInt].sev["Minor Injury"] + " minor injury\n"
+                     + "  " + specifics[yearInt][monthInt].sev["Severe Injury"] + " severe injury\n"
+                     + "  " + specifics[yearInt][monthInt].sev["Fatal"] + " fatal\n"
+                     + "  " + specifics[yearInt][monthInt].sev["Not Available"] + " not available");
+            } else {
+                tooltip.text(month + " " + year + ": " + count + " injuries")
+                    .style("font", fontSize + " sans-serif");
+            }
+        
+        return tooltip
+            .style("visibility", "visible")
+            .style("top", (d3.event.pageY-10)+"px")
+            .style("left", (d3.event.pageX-tooltip.style("width").replace("px","")-20)+"px");
+    });
 
 	// Render legend
 	$("#accidents-per-month").prepend($("<div class='legend'>"));
