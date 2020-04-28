@@ -667,12 +667,13 @@ function createMonthlyViz(data) {
 	$("div#accidents-per-month div.legend").append(selectButton);
 	selectButton.click(function() {showAll()});
 
-	toggle("2018");
-	toggle("2017");
-	toggle("2016");
-	toggle("2015");
-	toggle("2014");
-	toggle("2013");
-	toggle("2012");
-	toggle("2011");
+	toggle(2018);
+	toggle(2017);
+	toggle(2016);
+	toggle(2015);
+	toggle(2014);
+	toggle(2013);
+	toggle(2012);
+	toggle(2011);
+	console.log(active);
 }

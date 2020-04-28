@@ -1,5 +1,10 @@
 /* Global styles */
 
+p {
+	font-size: 1em;
+	line-height: 2em;
+}
+
 .svg-tooltip {
     background: rgba(69,77,93,.9);
     border-radius: .1rem;
@@ -16,12 +21,16 @@
 
 .media {
 	margin: 50px 0;
+}
+
+.media p {
 	font-size: 14px;
+	line-height: 1.5em
 }
 
 .container {
-	padding-top: 50px;
-	padding-bottom: 50px;
+	padding-top: 100px;
+	padding-bottom: 100px;
 }
 
 .heading {
@@ -34,6 +43,19 @@
 
 #intro {
 	height: 100vh;
+	background-color: #101321;
+    background-image: url(Japan-Map-Transparent-PNG.png);
+    background-repeat: no-repeat;
+    background-position: center center;
+	color: white;
+    text-align: center;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+}
+
+#intro p {
+	margin-top: 25px;
 }
 
 /* Styles for the demographics main visualization */

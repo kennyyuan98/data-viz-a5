@@ -15,31 +15,34 @@
 	<section id="intro">
 		<div class="container">
 			<h1>Injuries on Japan's Railway System</h1>
-			<p>hi ima train</p>
+			<p>
+				COMS 4995 Data Visualization, Columbia University
+				<br>
+				By: Jessica Cheng, Kenny Yuan, Liz Nichols, Courtney Mok
+			</p>
 		</div>
 	</section>
 
 	<!-- Geo data section -->
-	<section class="heading">
-		<div class="container">
-			<h2>Geography</h2>
-		</div>
-	</section>
 	<section>
 		<div class="container">
-			<p>wherefore</p>
-		</div>
-	</section>
+			<p>
+				The Japanese subway and train system is a complex network of independently owned private companies. These companies took over most of the operations of the government-owned system in the late 1980s and include both surface and underground railway systems. [<a href="https://en.wikipedia.org/wiki/Rail_transport_in_Japan" target="_blank">1</a>] The Japanese railway system is a major component of transportation: in 2017, the 10 busiest Japan Rail (the largest passenger railway company) stations alone saw an average daily ridership of nearly 4 million people [<a href="https://www.jreast.co.jp/passenger/index.html" target="_blank">2</a>], comparable to the entirety of the MTA’s average daily weekday ridership of 5.6 million people in 2017 [<a href="http://web.mta.info/nyct/facts/ridership/" target="_blank">3</a>]. Comparing the total 2017 ridership of both systems, the MTA serves about 1.8 billion people [<a href="http://web.mta.info/nyct/facts/ridership/" target="_blank">4</a>], while Japan’s railway system serves nearly 25 billion [<a href="https://www.jreast.co.jp/passenger/index.html" target="_blank">5</a>].
+				<br><br>
+				Since 2009, laboneko has been keeping track of all accidents that have occurred on Japan’s railway system [<a href="https://accident.laboneko.jp/" target="_blank">6</a>]. They have gathered over ten thousand data points containing information about the time, station, gender, age, and severity of each individual accident. The term “accident” covers a wide range of incidents, such as suicides, car accidents, etc.
+			</p>
 
-	<!-- Demographic data section -->
-	<section class="heading">
-		<div class="container">
-			<h2>Demographics</h2>
-		</div>
-	</section>
-	<section>
-		<div class="container">
-			<p>hb the ppl tho. <span style="color: steelblue">dudes are blue.</span> <span style="color: #d65454">gals are pink.</span></p>
+			<!-- INSERT LIZ'S GEO CHART HERE -->
+			<div class="media"></div>
+
+			<p>
+				There are densities of accidents in larger cities, such as Osaka, Nagasaki, and Yokohama. These major metropolitan areas are incredibly important to Japanese society and have large numbers of workers and students.
+				<br><br>
+				Considering this concentration of ridership, we hypothesize that over the past decade, working-age adults at busy metropolitan stations are at the highest risk for getting into accidents on Japan’s train system. Through visualizations, we hope to test our hypothesis and deliver a more impactful message about where attention should be directed to increase the safety of the railway system in Japan—and, possibly, other similarly busy train systems across the world—in order to better protect this crucial demographic.
+				<br><br>
+				To better understand the demographic features of our data, we first broke it down by age group and gender, to see who exactly was most prone to get into an accident on the Japanese rail system. In the following visualization, <span style="color: steelblue">men are blue</span> and <span style="color: #d65454">women are pink</span>, and the y-axis displays the number of accidents.
+			</p>
+
 			<div id="demographics" class="media">
 				<div id="severity">
 					<div class="checkbox-wrapper">
@@ -60,36 +63,47 @@
 					</div>
 				</div>
 			</div>
-			<p>genders over the hours of the day</p>
+
+			<p>
+				From this visualization, we can see that men generally get into accidents more than women, and the people who suffer from the most accidents are those in their 20s and 60s. There are more men getting into accidents than women, which may be explained by the fact that men are employed at greater percentages than women. In 2018, the female employment rate in Japan was around 51.3% [<a href="https://www.statista.com/statistics/643486/japan-female-employment-rate/" target="_blank">7</a>], while the male employment rate was around 69.3% [<a href="https://www.statista.com/statistics/643300/japan-male-employment-rate/" target="_blank">8</a>].
+				<br><br>
+				To address the time question of the “working-age adults” part of our hypothesis, we broke down our data into hours of the day. Again, <span style="color: steelblue">men are blue</span> and <span style="color: #d65454">women are pink</span>, and the y-axis displays the number of accidents.
+			</p>
+
 			<div id="accidents-per-hour" class="media"></div>
-		</div>
-	</section>
 
-	<!-- Time data section -->
-	<section class="heading">
-		<div class="container">
-			<h2>Time</h2>
-		</div>
-	</section>
-	<section>
-		<div class="container">
-			<p>Over the years.</p>
+			<p>
+				Here, it is clear that there are peaks in the number of accidents during the time that the average working person in Japan goes to [<a href="https://mainichi.doda.jp/article/2019/01/26/1083.html" target="_blank">9</a>] and leaves their job [<a href="https://next.rikunabi.com/tech/docs/ct_s03600.jsp?p=001083" target="_blank">10</a>]. We can also see that both men and women are getting injured during these hours of the day and follow similar trends, so it is not very likely that the causes of the accidents are particularly gendered.
+				<br><br>
+				Thus, we can assume that our hypothesis—working-age adults at busy metropolitan stations are at the highest risk for getting into accidents—cannot be rejected.
+				<br><br>
+				We then wanted to explore this time aspect further, starting with the question of whether the number of accidents has been decreasing over the years as, presumably, more and more safety measures have been implemented. This might provide insights as to whether these measures have been effective. Here, the y-axis shows the total number of accidents.
+			</p>
+			
 			<div id="accidents-per-year" class="media"></div>
-			<p>Now let's see how the accidents are distributed over the months of the year. In the following visualization, you can select a subset of the years to display, which will move the blue line that shows average number of accidents per month.</p>
-			<div id="accidents-per-month" class="media"></div>
-			<p>As you can see, it's gone down over the years.</p>
-		</div>
-	</section>
 
-	<!-- Conclusions section -->
-	<section class="heading">
-		<div class="container">
-			<h2>Conclusions</h2>
-		</div>
-	</section>
-	<section>
-		<div class="container">
-			<p>dab</p>
+			<p>
+				As the above visualization shows, the number of accidents does decrease over the decade.
+				<br><br>
+				We were curious about whether the accidents had any kind of seasonality. That is, are these accidents truly just accidents, or are there any months that have consistently have a higher number of accidents every single year? If there is a seasonality to the number of accidents, it could suggest a more intentional cause for these accidents (for example, suicide).
+				<br><br>
+				In the below visualization, years can be toggled on and off using the legend on the left-hand side. The blue averages line will adjust accordingly, and clicking on a datapoint will expand the tooltip to show more data.
+			</p>
+
+			<div id="accidents-per-month" class="media"></div>
+
+			<p>
+				Clicking through each year, there does not seem to be a particular “hot month” for accidents. The generally decreasing blue average line further confirms that the number of accidents goes down every year.
+				<br><br>
+				Circling back to the question of geography and the cities in which these accidents seem to be concentrated, we can put our findings together to see which districts have the most accidents and what proportion of total accidents each district has:
+			</p>
+
+			<!-- INSERT COURTNEY'S GEO CHART HERE -->
+			<div class="media"></div>
+
+			<p>
+				The decreasing number of accidents might suggest that Japanese railway safety measures are effective, and should be adopted by other countries and cities. With the particular question of suicide, and the fact that working adults might be under a particular kind of stress, Japanese railway companies have taken several measures to lower the possibility of suicide. High chest barriers to prevent suicide, installation of blue light that has been shown to have a calming effect, and a change in the audio signaling trains’ departures to decrease stress are just some examples of these measures [<a href="https://www.citylab.com/transportation/2018/05/the-amazing-psychology-of-japanese-train-stations/560822/" target="_blank">11</a>].
+			</p>
 		</div>
 	</section>
 
